@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inner Circle Softech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:'Poppins',sans-serif;
+background:#0f172a;
+color:white;
+overflow-x:hidden;
+transition:0.3s;
+}
+
+.light-mode{ background:#f1f5f9; color:black; }
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 40px;
+background:#111827;
+}
+
+.logo{
+font-size:12px;
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo img{width:40px;}
+
+nav ul{display:flex;list-style:none;}
+nav li{margin:0 15px;}
+
+nav a{
+text-decoration:none;
+cursor:pointer;
+color:white;
+}
+
+.mode-btn{
+padding:6px 12px;
+border:none;
+border-radius:6px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.hero{
+text-align:center;
+padding:140px 20px;
+background:radial-gradient(circle,#1e293b,#020617);
+position:relative;
+overflow:hidden;
+}
+
+.particles span{
+position:absolute;
+width:6px;
+height:6px;
+background:white;
+opacity:0.3;
+border-radius:50%;
+animation:particleMove 20s linear infinite;
+}
+
+@keyframes particleMove{
+0%{transform:translateY(0);opacity:0;}
+50%{opacity:0.6;}
+100%{transform:translateY(-1000px);opacity:0;}
+}
+
+.icon-wrapper{
+position:relative;
+display:inline-block;
+margin-bottom:25px;
+}
+
+.hero-icon{width:120px;}
+
+.orbit{
+position:absolute;
+top:-20px;
+left:-20px;
+width:160px;
+height:160px;
+border:2px dashed rgba(255,255,255,0.3);
+border-radius:50%;
+animation:spin 12s linear infinite;
+}
+
+.orbit-dot{
+width:10px;
+height:10px;
+background:#3b82f6;
+border-radius:50%;
+position:absolute;
+top:-5px;
+left:50%;
+transform:translateX(-50%);
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg);}
+100%{transform:rotate(360deg);}
+}
+
+.hero h1{font-size:48px;font-weight:700;}
+.hero p{color:#cbd5f5;margin-bottom:35px;}
+
+.buttons button{
+margin:10px;
+padding:14px 28px;
+border-radius:25px;
+border:none;
+background:#2563eb;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.buttons button:hover{
+transform:rotateX(8deg) rotateY(-8deg) translateY(-5px);
+box-shadow:0 15px 30px rgba(0,0,0,0.4);
+}
+
+.register-container,.login-container{
+display:none;
+min-height:90vh;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#5f2c82,#49a09d);
+}
+
+.register-wrapper,.login-wrapper{
+display:flex;
+width:850px;
+background:rgba(255,255,255,0.1);
+border-radius:20px;
+backdrop-filter:blur(20px);
+overflow:hidden;
+}
+
+.register-left,.login-left{
+flex:1;
+padding:40px;
+}
+
+.register-left input,.login-left input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:6px;
+}
+
+.register-left button,.login-left button{
+width:100%;
+padding:12px;
+border:none;
+background:#4da3ff;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.register-right{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,255,255,0.05);
+}
+
+.register-right img{width:70%;}
+
+.error{
+color:red;
+font-size:13px;
+margin-top:-5px;
+margin-bottom:5px;
+}
+
+.switch{
+margin-top:10px;
+font-size:14px;
+}
+
+.switch a{
+color:#38bdf8;
+cursor:pointer;
+}
+
+/* CHATBOT */
+
+.chat-toggle{
+position:fixed;
+bottom:20px;
+right:20px;
+width:60px;
+height:60px;
+border-radius:50%;
+background:#2563eb;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+font-size:26px;
+box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+.chatbot{
+position:fixed;
+bottom:90px;
+right:20px;
+width:350px;
+height:450px;
+background:#111827;
+border-radius:15px;
+display:none;
+flex-direction:column;
+box-shadow:0 0 20px rgba(0,0,0,0.6);
+overflow:hidden;
+}
+
+.chat-header{
+background:#2563eb;
+padding:12px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+}
+
+.chat-messages{
+flex:1;
+padding:10px;
+overflow-y:auto;
+}
+
+.user{ text-align:right; margin:5px; color:#38bdf8; }
+.bot{ text-align:left; margin:5px; color:#a5b4fc; }
+
+.chat-input{
+display:flex;
+border-top:1px solid #333;
+}
+
+.chat-input input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+}
+
+.chat-input button{
+padding:10px;
+border:none;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">
+<img src="images.png">
+Inner Circle Softech
+</div>
+
+<ul>
+<li><a onclick="showHome()">Home</a></li>
+<li><a onclick="showRegister()">Register</a></li>
+<li><a onclick="showLogin()">Login</a></li>
+<li><a onclick="downloadExcel()">Download Excel</a></li>
+<li><button class="mode-btn" onclick="toggleMode()">Mode</button></li>
+</ul>
+</nav>
+
+<!-- HOME PAGE -->
+
+<div id="homePage" class="hero">
+
+<div class="particles">
+<span style="left:10%"></span>
+<span style="left:20%"></span>
+<span style="left:30%"></span>
+<span style="left:40%"></span>
+<span style="left:50%"></span>
+</div>
+
+<div class="icon-wrapper">
+<img class="hero-icon" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+<div class="orbit"><div class="orbit-dot"></div></div>
+</div>
+
+<h1>We Make Your Dreams Alive</h1>
+<p>Connecting students and professionals with tech opportunities.</p>
+
+<div class="buttons">
+<button onclick="showRegister()">Register</button>
+<button onclick="showLogin()">Login</button>
+</div>
+
+</div>
+
+<!-- REGISTER -->
+
+<div id="registerPage" class="register-container">
+<div class="register-wrapper">
+
+<div class="register-left">
+
+<h2>Create Account</h2>
+
+<form onsubmit="return registerUser()">
+
+<input id="name" placeholder="Full Name">
+<div id="nameError" class="error"></div>
+
+<input id="mobile" placeholder="Mobile Number">
+<div id="mobileError" class="error"></div>
+
+<input id="email" placeholder="Email">
+<div id="emailError" class="error"></div>
+
+<input id="password" type="password" placeholder="Password">
+<div id="passwordError" class="error"></div>
+
+<button type="submit">Register</button>
+
+</form>
+
+<div class="switch">
+Already registered? <a onclick="showLogin()">Go to Login</a>
+</div>
+
+</div>
+
+<div class="register-right">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+</div>
+
+</div>
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginPage" class="login-container">
+<div class="login-wrapper">
+
+<div class="login-left">
+
+<h2>Login</h2>
+
+<form onsubmit="return loginUser()">
+
+<input id="loginEmail" placeholder="Email">
+<div id="loginEmailError" class="error"></div>
+
+<input id="loginPassword" type="password" placeholder="Password">
+<div id="loginPasswordError" class="error"></div>
+
+<button type="submit">Login</button>
+
+</form>
+
+</div>
+
+<div class="login-left">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" width="70%">
+</div>
+
+</div>
+</div>
+
+<!-- CHATBOT -->
+
+<div class="chat-toggle" onclick="toggleChat()">🤖</div>
+
+<div id="chatbot" class="chatbot">
+
+<div class="chat-header">
+AI Assistant
+<span onclick="toggleChat()">✖</span>
+</div>
+
+<div id="chatMessages" class="chat-messages"></div>
+
+<div class="chat-input">
+<input id="chatInput" placeholder="Ask anything...">
+<button onclick="sendMessage()">Send</button>
+</div>
+
+</div>
+
+<script>
+
+let users=[];
+
+if(localStorage.getItem("users")){
+users = JSON.parse(localStorage.getItem("users"));
+}
+
+function showHome(){
+homePage.style.display="block";
+registerPage.style.display="none";
+loginPage.style.display="none";
+}
+
+function showRegister(){
+homePage.style.display="none";
+registerPage.style.display="flex";
+loginPage.style.display="none";
+}
+
+function showLogin(){
+homePage.style.display="none";
+registerPage.style.display="none";
+loginPage.style.display="flex";
+}
+
+function toggleMode(){
+document.body.classList.toggle("light-mode");
+}
+
+/* REGISTER */
+
+function registerUser(){
+
+let valid=true;
+
+let name=document.getElementById("name").value.trim();
+let mobile=document.getElementById("mobile").value.trim();
+let email=document.getElementById("email").value.trim();
+let password=document.getElementById("password").value.trim();
+
+nameError.innerText="";
+mobileError.innerText="";
+emailError.innerText="";
+passwordError.innerText="";
+
+if(!/^[A-Za-z ]+$/.test(name)){
+nameError.innerText="Enter valid name";
+valid=false;
+}
+
+if(!/^[0-9]{10}$/.test(mobile)){
+mobileError.innerText="Mobile must be 10 digits";
+valid=false;
+}
+
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+emailError.innerText="Enter valid email";
+valid=false;
+}
+
+if(password.length<6){
+passwordError.innerText="Password min 6 characters";
+valid=false;
+}
+
+if(!valid) return false;
+
+users.push({Name:name,Mobile:mobile,Email:email,Password:password});
+localStorage.setItem("users",JSON.stringify(users));
+
+alert("Registration Successful");
+showLogin();
+
+return false;
+}
+
+/* LOGIN */
+
+function loginUser(){
+
+let email=document.getElementById("loginEmail").value.trim();
+let password=document.getElementById("loginPassword").value.trim();
+
+loginEmailError.innerText="";
+loginPasswordError.innerText="";
+
+let found = users.find(u=>u.Email===email && u.Password===password);
+
+if(found){
+alert("Login Successful");
+showHome();
+}else{
+loginPasswordError.innerText="Invalid email or password";
+}
+
+return false;
+}
+
+/* EXCEL */
+
+function downloadExcel(){
+
+let ws=XLSX.utils.json_to_sheet(users);
+let wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"Users");
+
+XLSX.writeFile(wb,"registered_users.xlsx");
+
+}
+
+/* CHATBOT */
+
+function toggleChat(){
+chatbot.style.display=chatbot.style.display==="flex"?"none":"flex";
+}
+
+function sendMessage(){
+
+let msg=chatInput.value.trim();
+if(msg==="") return;
+
+chatMessages.innerHTML+=`<div class="user">${msg}</div>`;
+
+let reply="I am AI assistant 🤖";
+
+msg=msg.toLowerCase();
+
+if(msg.includes("register")) reply="Click register button to create account.";
+else if(msg.includes("login")) reply="Go to login page and enter email & password.";
+else if(msg.includes("hello")) reply="Hello 👋 Welcome to Inner Circle Softech!";
+else if(msg.includes("help")) reply="You can register, login and download user Excel.";
+
+setTimeout(()=>{
+chatMessages.innerHTML+=`<div class="bot">${reply}</div>`;
+chatMessages.scrollTop=chatMessages.scrollHeight;
+},500);
+
+chatInput.value="";
+
+}
+
+</script>
+
+</body>
+</html>
